@@ -17,7 +17,11 @@ function M._mktemp()
   return path
 end
 
-function M.broot()
+function M.broot(opts)
+  if opts == nil then
+    opts = {}
+  end
+
   -- Create an unlisted `scratch-buffer`.
   local buffer_id = vim.api.nvim_create_buf(false, true)
   if buffer_id == 0 then
@@ -30,12 +34,16 @@ function M.broot()
     relative = "editor",
     row = 0,
     col = 0,
-    width = vim.fn.winwidth(0),
-    height = vim.fn.winheight(0),
+    width = vim.api.nvim_win_get_width(0),
+    height = vim.api.nvim_win_get_height(0),
     style = "minimal",
   })
   if window_id == 0 then
     error("Failed to open window")
+  end
+
+  if opts.extra_args == nil then
+    opts.extra_args = ""
   end
 
   local cmd_path = M._mktemp()
@@ -45,14 +53,23 @@ function M.broot()
     .. vim.fn.shellescape(M._config_files())
     .. " --outcmd "
     .. vim.fn.shellescape(cmd_path)
+    .. " "
+    .. opts.extra_args
+    .. " "
     .. " > "
     .. vim.fn.shellescape(out_path)
-  local job_id = vim.fn.termopen(cmd, {
-    -- cwd = ...,
+
+  local cmd_opts = {
     on_exit = function(_job_id, exit_code, _event_type)
       M._on_broot_exit(exit_code, window_id, buffer_id, cmd_path, out_path)
     end,
-  })
+  }
+
+  if opts.directory ~= nil then
+    cmd_opts.cwd = opts.directory
+  end
+
+  local job_id = vim.fn.termopen(cmd, cmd_opts)
   if job_id == 0 then
     error("Invalid job arguments")
   elseif job_id == -1 then
@@ -84,6 +101,9 @@ function M._read_outcmd_path(cmd_path)
     local tokens = vim.fn.split(line)
     if #tokens == 2 and tokens[1] == "cd" then
       vim.api.nvim_cmd({ cmd = "edit", args = { tokens[2] } }, {})
+    elseif #tokens > 2 and tokens[1] == "broot.nvim" then
+      table.remove(tokens, 1)
+      vim.cmd(vim.fn.join(tokens))
     elseif #tokens > 0 then
       vim.api.nvim_cmd({ cmd = "!", args = tokens }, {})
     end
