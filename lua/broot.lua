@@ -37,8 +37,8 @@ function M.broot(opts)
     relative = "editor",
     row = 0,
     col = 0,
-    width = vim.api.nvim_win_get_width(0),
-    height = vim.api.nvim_win_get_height(0),
+    width = vim.o.columns,
+    height = vim.o.lines,
     style = "minimal",
   })
   if window_id == 0 then
