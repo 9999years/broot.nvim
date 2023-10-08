@@ -10,6 +10,9 @@ end
 
 function M._mktemp()
   local path = vim.fn.tempname()
+  if path == nil then
+    error("Failed to create tempfile")
+  end
   local file = io.open(path, "w")
   if file ~= nil then
     file:close()
@@ -47,7 +50,7 @@ function M.broot(opts)
   end
 
   local cmd_path = M._mktemp()
-  local out_path = vim.fn.tempname()
+  local out_path = M._mktemp()
   local cmd = vim.fn.shellescape(M.broot_binary)
     .. " --conf "
     .. vim.fn.shellescape(M._config_files())
