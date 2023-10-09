@@ -1,14 +1,18 @@
 local M = {
   config = {
     broot_binary = "broot",
-    config_files = {
-      vim.fn.expand("~/.config/broot/conf.toml"),
-      vim.fn.expand("~/.config/broot/nvim.toml"),
-    },
+    config_files = vim.tbl_map(vim.fn.expand, {
+      "~/.config/broot/conf.toml",
+      "~/.config/broot/nvim.toml",
+    }),
   },
 }
 
 function M.setup(opts)
+  if opts.config_files ~= nil then
+    opts.config_files = vim.tbl_map(vim.fn.expand, opts.config_files)
+  end
+
   M.config = vim.tbl_extend("force", M.config, opts)
 end
 
