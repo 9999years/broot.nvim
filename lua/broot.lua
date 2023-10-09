@@ -1,11 +1,23 @@
 local M = {
-  broot_binary = "broot",
-  default_config_file = vim.fn.expand("~/.config/broot/conf.toml"),
-  vim_config_file = vim.fn.expand("~/.config/broot/nvim.toml"),
+  config = {
+    broot_binary = "broot",
+    config_files = vim.tbl_map(vim.fn.expand, {
+      "~/.config/broot/conf.toml",
+      "~/.config/broot/nvim.toml",
+    }),
+  },
 }
 
+function M.setup(opts)
+  if opts.config_files ~= nil then
+    opts.config_files = vim.tbl_map(vim.fn.expand, opts.config_files)
+  end
+
+  M.config = vim.tbl_extend("force", M.config, opts)
+end
+
 function M._config_files()
-  return M.default_config_file .. ";" .. M.vim_config_file
+  return vim.fn.join(M.config.config_files, ";")
 end
 
 function M._mktemp()
@@ -33,12 +45,17 @@ function M.broot(opts)
   -- Don't warn when exiting the Broot buffer.
   vim.api.nvim_buf_set_option(buffer_id, "modified", false)
 
+  local height = vim.o.lines - vim.o.cmdheight
+  if vim.o.laststatus ~= 0 then
+    height = height - 1
+  end
+
   local window_id = vim.api.nvim_open_win(buffer_id, true, {
     relative = "editor",
     row = 0,
     col = 0,
     width = vim.o.columns,
-    height = vim.o.lines,
+    height = height,
     style = "minimal",
   })
   if window_id == 0 then
@@ -51,7 +68,7 @@ function M.broot(opts)
 
   local cmd_path = M._mktemp()
   local out_path = M._mktemp()
-  local cmd = vim.fn.shellescape(M.broot_binary)
+  local cmd = vim.fn.shellescape(M.config.broot_binary)
     .. " --conf "
     .. vim.fn.shellescape(M._config_files())
     .. " --outcmd "

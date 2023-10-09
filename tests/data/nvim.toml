@@ -1,0 +1,7 @@
+[[verbs]]
+key = "enter"
+invocation = "edit"
+shortcut = "e"
+apply_to = "file"
+external = "broot.nvim edit +{line} {file}"
+from_shell = true
