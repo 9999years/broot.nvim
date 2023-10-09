@@ -130,6 +130,7 @@
         installPhase = ''
           mkdir -p "$out"
           vimhelp doc/ --out-dir "$out"
+          cp "$out/broot.nvim.txt.html" "$out/index.html"
         '';
       };
     });

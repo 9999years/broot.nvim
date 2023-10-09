@@ -1,0 +1,38 @@
+---
+name: Render documentation with vimhelp and deploy to GitHub Pages
+on:
+  push:
+    branches:
+      - main
+jobs:
+  vimhelp-render-html-docs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.head_ref }}
+
+      - uses: cachix/install-nix-action@v22
+        with:
+          extra_nix_config: |
+            extra-experimental-features = nix-command flakes
+            accept-flake-config = true
+
+      - name: Render documentation with vimhelp
+        id: build_docs
+        run: |
+          DOC_PATH=$(nix build '.#docs' --print-build-logs --print-out-paths --no-link)
+          echo "doc_path=$DOC_PATH" >> "$GITHUB_OUTPUT"
+
+      - run: |
+          sudo chown -R "$USER" public/
+          cp public/batteries.txt.html public/index.html
+          echo "Pages to deploy:"
+          ls -l public/
+
+      - name: Deploy to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4.3.3
+        with:
+          branch: gh-pages
+          folder: ${{ steps.build_docs.outputs.doc_path }}
