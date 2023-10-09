@@ -120,7 +120,7 @@ function M._read_outcmd_path(cmd_path)
     end
     local tokens = vim.fn.split(line)
     if #tokens == 2 and tokens[1] == "cd" then
-      vim.api.nvim_cmd({ cmd = "edit", args = { tokens[2] } }, {})
+      vim.api.nvim_cmd({ cmd = "cd", args = { tokens[2] } }, {})
     elseif #tokens > 2 and tokens[1] == "broot.nvim" then
       table.remove(tokens, 1)
       vim.cmd(vim.fn.join(tokens))
