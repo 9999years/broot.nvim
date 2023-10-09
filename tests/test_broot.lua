@@ -43,7 +43,7 @@ broot_test["can_use_directory"] = function()
 end
 
 broot_test["can_use_extra_args"] = function()
-  eq(child.lua_get([[M.broot{extra_args = "--cmd c/sam"}]]), vim.NIL)
+  eq(child.lua_get([[M.broot{extra_args = {"--cmd", "c/sam"}}]]), vim.NIL)
   vim.loop.sleep(250)
   child.type_keys("<CR>")
   vim.loop.sleep(250)
