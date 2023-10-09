@@ -7,6 +7,10 @@
       url = "github:echasnovski/mini.nvim";
       flake = false;
     };
+    vimhelp = {
+      url = "github:c4rlo/vimhelp";
+      flake = false;
+    };
   };
 
   nixConfig = {
@@ -19,6 +23,7 @@
     self,
     nixpkgs,
     mini-nvim,
+    vimhelp,
   }: let
     forAllSystems = function:
       nixpkgs.lib.genAttrs [
@@ -85,6 +90,48 @@
             alejandra --check .
           '';
         });
+    });
+
+    packages = forAllSystems (pkgs: {
+      vimhelp = pkgs.writeShellApplication {
+        name = "vimhelp";
+
+        runtimeInputs = [
+          (pkgs.python3.withPackages (pyPkgs: [
+            pyPkgs.flask
+          ]))
+        ];
+
+        text = ''
+          inDir="$1"
+          shift
+          tmpdir=$(mktemp -d)
+          cp -r ${pkgs.neovim}/share/nvim/runtime/doc/* "$tmpdir/"
+          cp -r "$inDir"/* "$tmpdir/"
+          python3 ${vimhelp}/scripts/h2h.py \
+            --project neovim \
+            --in-dir "$tmpdir/" \
+            "$@"
+        '';
+      };
+
+      docs = pkgs.stdenv.mkDerivation {
+        name = "broot.nvim-docs";
+
+        src = ./.;
+
+        dontConfigure = true;
+        dontBuild = true;
+
+        nativeBuildInputs = [
+          self.packages.${pkgs.system}.vimhelp
+        ];
+
+        installPhase = ''
+          mkdir -p "$out"
+          vimhelp doc/ --out-dir "$out"
+        '';
+      };
     });
 
     devShells = forAllSystems (pkgs: {
