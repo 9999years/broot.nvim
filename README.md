@@ -11,15 +11,9 @@
 require("broot").broot()
 ```
 
-## Roadmap
+## Features
 
-- [x] Launch in directory
-- [x] Add extra CLI arguments to `broot`
-- [ ] Documentation
-- [ ] Add user commands
-- [ ] Lazily initialize `nvim.toml` config file
-- [ ] Verb precedence for Broot (may require upstream Broot changes)
-- [ ] Netrw replacement
-- [ ] Window size/placement customization
-- [ ] Type annotations / type checking for Lua sources (may require upstream
-  `lua-language-server` changes)
+- Press enter to edit files
+- `cd` to a directory
+- Launch `broot` in the current directory or a custom directory
+- Add extra CLI arguments to the `broot` invocation
