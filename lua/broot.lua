@@ -63,7 +63,9 @@ function M.broot(opts)
   end
 
   if opts.extra_args == nil then
-    opts.extra_args = ""
+    opts.extra_args = {}
+  else
+    opts.extra_args = vim.tbl_map(vim.fn.shellescape, opts.extra_args)
   end
 
   local cmd_path = M._mktemp()
@@ -74,7 +76,7 @@ function M.broot(opts)
     .. " --outcmd "
     .. vim.fn.shellescape(cmd_path)
     .. " "
-    .. opts.extra_args
+    .. vim.fn.join(opts.extra_args)
     .. " "
     .. " > "
     .. vim.fn.shellescape(out_path)

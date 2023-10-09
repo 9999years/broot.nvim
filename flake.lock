@@ -34,7 +34,24 @@
     "root": {
       "inputs": {
         "mini-nvim": "mini-nvim",
-        "nixpkgs": "nixpkgs"
+        "nixpkgs": "nixpkgs",
+        "vimhelp": "vimhelp"
+      }
+    },
+    "vimhelp": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1691566434,
+        "narHash": "sha256-Nx1qS57M4QWrhVXwqfKMfUPzZr4qLqJAe2MPu5UN//w=",
+        "owner": "c4rlo",
+        "repo": "vimhelp",
+        "rev": "ba25e9b38cb75181190af86c03ed1bae9c7d012b",
+        "type": "github"
+      },
+      "original": {
+        "owner": "c4rlo",
+        "repo": "vimhelp",
+        "type": "github"
       }
     }
   },
