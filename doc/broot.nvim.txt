@@ -1,9 +1,10 @@
 *broot.nvim.txt*                                Broot integration for Neovim.
+                                    https://github.com/9999years/broot.nvim
 
                                       Type |gO| to see the table of contents.
 
 =============================================================================
-https://github.com/9999years/broot.nvim                          *broot.nvim*
+                                                                 *broot.nvim*
 
 |broot.nvim| is a Broot integration plugin for Neovim. Learn more about Broot
 here: https://github.com/Canop/broot
