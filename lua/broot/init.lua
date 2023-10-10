@@ -46,6 +46,11 @@ function M.broot(opts)
     opts = {}
   end
 
+  local extra_args = {}
+  if opts.extra_args ~= nil then
+    extra_args = vim.tbl_map(vim.fn.shellescape, opts.extra_args)
+  end
+
   -- Create an unlisted `scratch-buffer`.
   local buffer_id = vim.api.nvim_create_buf(false, true)
   if buffer_id == 0 then
@@ -71,12 +76,6 @@ function M.broot(opts)
     error("Failed to open window")
   end
 
-  if opts.extra_args == nil then
-    opts.extra_args = {}
-  else
-    opts.extra_args = vim.tbl_map(vim.fn.shellescape, opts.extra_args)
-  end
-
   local cmd_path = M._mktemp()
   local out_path = M._mktemp()
   local cmd = vim.fn.shellescape(M.config.broot_binary)
@@ -85,7 +84,7 @@ function M.broot(opts)
     .. " --outcmd "
     .. vim.fn.shellescape(cmd_path)
     .. " "
-    .. vim.fn.join(opts.extra_args)
+    .. vim.fn.join(extra_args)
     .. " "
     .. " > "
     .. vim.fn.shellescape(out_path)
