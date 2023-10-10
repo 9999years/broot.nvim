@@ -5,12 +5,21 @@ local M = {
       "~/.config/broot/conf.toml",
       "~/.config/broot/nvim.toml",
     }),
+    default_directory = vim.fn.getcwd,
   },
 }
 
 function M.setup(opts)
   if opts.config_files ~= nil then
     opts.config_files = vim.tbl_map(vim.fn.expand, opts.config_files)
+  end
+
+  -- If `default_directory is a string, wrap it in a function.
+  if type(opts.default_directory) == "string" then
+    local default_directory = opts.default_directory
+    opts.default_directory = function()
+      return default_directory
+    end
   end
 
   M.config = vim.tbl_extend("force", M.config, opts)
@@ -37,6 +46,11 @@ function M.broot(opts)
     opts = {}
   end
 
+  local extra_args = {}
+  if opts.extra_args ~= nil then
+    extra_args = vim.tbl_map(vim.fn.shellescape, opts.extra_args)
+  end
+
   -- Create an unlisted `scratch-buffer`.
   local buffer_id = vim.api.nvim_create_buf(false, true)
   if buffer_id == 0 then
@@ -45,7 +59,7 @@ function M.broot(opts)
   -- Don't warn when exiting the Broot buffer.
   vim.api.nvim_buf_set_option(buffer_id, "modified", false)
 
-  local height = vim.o.lines - vim.o.cmdheight
+  local height = vim.o.lines - vim.o.cmdheight - 1
   if vim.o.laststatus ~= 0 then
     height = height - 1
   end
@@ -62,12 +76,6 @@ function M.broot(opts)
     error("Failed to open window")
   end
 
-  if opts.extra_args == nil then
-    opts.extra_args = {}
-  else
-    opts.extra_args = vim.tbl_map(vim.fn.shellescape, opts.extra_args)
-  end
-
   local cmd_path = M._mktemp()
   local out_path = M._mktemp()
   local cmd = vim.fn.shellescape(M.config.broot_binary)
@@ -76,7 +84,7 @@ function M.broot(opts)
     .. " --outcmd "
     .. vim.fn.shellescape(cmd_path)
     .. " "
-    .. vim.fn.join(opts.extra_args)
+    .. vim.fn.join(extra_args)
     .. " "
     .. " > "
     .. vim.fn.shellescape(out_path)
@@ -89,6 +97,8 @@ function M.broot(opts)
 
   if opts.directory ~= nil then
     cmd_opts.cwd = opts.directory
+  else
+    cmd_opts.cwd = M.config.default_directory() or "."
   end
 
   local job_id = vim.fn.termopen(cmd, cmd_opts)
