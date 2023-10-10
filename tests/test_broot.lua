@@ -10,12 +10,6 @@ local T = new_set {
       child.restart { "-u", "scripts/mini_test_init.lua" }
       child.lua([[
         M = require("broot")
-        M.setup {
-          config_files = {
-            vim.fn.fnamemodify("tests/data/conf.toml", ":p"),
-            vim.fn.fnamemodify("tests/data/nvim.toml", ":p"),
-          },
-        }
         vim.cmd("cd tests/data")
       ]])
     end,
@@ -40,6 +34,14 @@ broot_test["can_use_directory"] = function()
   child.type_keys(100, "gol", "<CR>")
   vim.loop.sleep(250)
   expect.reference_screenshot(child.get_screenshot())
+end
+
+broot_test["can_use_git_root_directory"] = function()
+  eq(child.lua_get([[M.broot{directory = M.GIT_ROOT}]]), vim.NIL)
+  vim.loop.sleep(250)
+  child.type_keys(100, " cd", "<CR>")
+  vim.loop.sleep(250)
+  eq(child.lua_get([[vim.fn.getcwd()]]), vim.trim(vim.fn.system("git rev-parse --show-toplevel")))
 end
 
 broot_test["can_use_extra_args"] = function()

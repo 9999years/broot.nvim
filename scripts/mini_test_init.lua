@@ -1,10 +1,21 @@
 vim.opt.statusline = "%t"
 
 -- Add current directory to 'runtimepath' to be able to use 'lua' files
-vim.cmd([[let &runtimepath.=','.getcwd()]])
-
 -- Add 'mini.nvim' to 'runtimepath' to be able to use 'mini.test'
-vim.cmd("set runtimepath+=" .. os.getenv("MINI_NVIM"))
+local mini_nvim = os.getenv("MINI_NVIM")
+if mini_nvim == nil then
+  error("$MINI_NVIM is not set; are you in the `nix develop` shell?")
+end
+vim.opt.runtimepath:append("," .. vim.fn.getcwd() .. "," .. mini_nvim)
 
 -- Set up 'mini.test'
 require("mini.test").setup()
+
+-- Set up 'broot.nvim'.
+local broot = require("broot")
+broot.setup {
+  config_files = {
+    vim.fn.fnamemodify("tests/data/conf.toml", ":p"),
+    vim.fn.fnamemodify("tests/data/nvim.toml", ":p"),
+  },
+}

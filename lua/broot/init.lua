@@ -6,6 +6,8 @@ local M = {
       "~/.config/broot/nvim.toml",
     }),
   },
+  -- Unique value for use as a constant.
+  GIT_ROOT = {},
 }
 
 function M.setup(opts)
@@ -88,7 +90,11 @@ function M.broot(opts)
   }
 
   if opts.directory ~= nil then
-    cmd_opts.cwd = opts.directory
+    if opts.directory == M.GIT_ROOT then
+      cmd_opts.cwd = require("broot.git").repo_root_or_current_directory()
+    else
+      cmd_opts.cwd = opts.directory
+    end
   end
 
   local job_id = vim.fn.termopen(cmd, cmd_opts)
