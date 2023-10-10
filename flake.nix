@@ -56,6 +56,7 @@
           nativeBuildInputs = [
             pkgs.neovim
             pkgs.broot
+            pkgs.git
           ];
 
           MINI_NVIM = "${mini-nvim}";
