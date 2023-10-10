@@ -57,4 +57,16 @@ broot_test["can_use_extra_args"] = function()
   expect.reference_screenshot(child.get_screenshot())
 end
 
+broot_test["can_resize"] = function()
+  child.o.lines = 35
+  child.o.columns = 100
+  eq(child.lua_get([[M.broot()]]), vim.NIL)
+  vim.loop.sleep(250)
+
+  child.o.lines = 24
+  child.o.columns = 40
+  vim.loop.sleep(250)
+  expect.reference_screenshot(child.get_screenshot())
+end
+
 return T
