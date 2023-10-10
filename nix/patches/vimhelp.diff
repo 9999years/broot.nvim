@@ -1,0 +1,12 @@
+diff --git a/templates/page.html b/templates/page.html
+index 4607eb2..edf72fe 100644
+--- a/templates/page.html
++++ b/templates/page.html
+@@ -93,6 +93,6 @@ Quick links:
+ </div>
+ </main>
+ <p>{{sitenavi}}</p>
+-<footer>This site is maintained by Carlo Teubner (<i>(my first name) at cteubner dot net</i>).</footer>
++<footer>This site is generated with <code>vimhelp</code>, maintained by Carlo Teubner (<i>(my first name) at cteubner dot net</i>).</footer>
+ </body>
+ </html>

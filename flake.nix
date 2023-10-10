@@ -93,27 +93,34 @@
     });
 
     packages = forAllSystems (pkgs: {
-      vimhelp = pkgs.writeShellApplication {
-        name = "vimhelp";
+      vimhelp = let
+        src = pkgs.applyPatches {
+          name = "vimhelp";
+          src = vimhelp;
+          patches = [./nix/patches/vimhelp.diff];
+        };
+      in
+        pkgs.writeShellApplication {
+          name = "vimhelp";
 
-        runtimeInputs = [
-          (pkgs.python3.withPackages (pyPkgs: [
-            pyPkgs.flask
-          ]))
-        ];
+          runtimeInputs = [
+            (pkgs.python3.withPackages (pyPkgs: [
+              pyPkgs.flask
+            ]))
+          ];
 
-        text = ''
-          inDir="$1"
-          shift
-          tmpdir=$(mktemp -d)
-          cp -r ${pkgs.neovim}/share/nvim/runtime/doc/* "$tmpdir/"
-          cp -r "$inDir"/* "$tmpdir/"
-          python3 ${vimhelp}/scripts/h2h.py \
-            --project neovim \
-            --in-dir "$tmpdir/" \
-            "$@"
-        '';
-      };
+          text = ''
+            inDir="$1"
+            shift
+            tmpdir=$(mktemp -d)
+            cp -r ${pkgs.neovim}/share/nvim/runtime/doc/* "$tmpdir/"
+            cp -r "$inDir"/* "$tmpdir/"
+            python3 ${src}/scripts/h2h.py \
+              --project neovim \
+              --in-dir "$tmpdir/" \
+              "$@"
+          '';
+        };
 
       docs = pkgs.stdenv.mkDerivation {
         name = "broot.nvim-docs";
