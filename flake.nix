@@ -62,6 +62,7 @@
           MINI_NVIM = "${mini-nvim}";
 
           checkPhase = ''
+            git init
             make test
           '';
         });
