@@ -28,15 +28,33 @@ broot.setup(opts)                                              *broot.setup()*
     opts: table
         Configuration options. The following keys are supported, all
         optional:
+                                                  *broot.config.broot_binary*
         • broot_binary: (string, default `broot`) The name of the
           `broot` binary to launch.
+                                                  *broot.config.config_files*
         • config_files: (list of strings) The paths to configuration
           files to pass to `broot` with the `--conf` argument.
-          Values are passed to |expand()| before being stored.
-          The default is: >
-            ~/.config/broot/conf.toml
-            ~/.config/broot/nvim.toml
-<
+          Values are passed to |expand()| before being stored, so you can use
+          environment variables and `~` in them.
+          The default value contains:
+          • `~/.config/broot/conf.toml`
+          • `~/.config/broot/nvim.toml`
+                                             *broot.config.default_directory*
+        • default_directory: (function() -> string) |broot.broot()| calls this
+          function to determine the directory to launch `broot` in if the user
+          doesn't give one explicitly.
+
+          If the `default_directory` function returns |luaref-nil|, the
+          |current-directory| is used instead.
+
+          The default value is `vim.fn.`|getcwd()|
+
+          The `require("broot.default_directory")` module contains a few
+          useful values for this configuration key:
+
+          • `git_root` returns the Git repository root
+            of the |current-file|.
+          • `current_file` returns the directory of the |current-file|.
 
 broot.broot(opts = {})                                        *broot.broot()*
 
@@ -48,13 +66,9 @@ broot.broot(opts = {})                                        *broot.broot()*
         optional:
         • extra_args: (list of strings) Extra arguments to pass to the `broot`
           binary.
-        • directory: (string, default |current-directory|) The directory to
-          launch `broot` in.
+        • directory: (string, default |config.default_directory()|)
+          The directory to launch `broot` in.
           The directory is set using the `cwd` of the started process, rather
           than being passed as an argument to `broot`.
-          If `directory` is set to `broot.GIT_ROOT`, `broot` will be run in
-          the Git repository root (as given by
-          `git rev-parse --show-toplevel`) or the current directory if no Git
-          repository root is found.
 
  vim:tw=78:ts=8:et:ft=help:norl:

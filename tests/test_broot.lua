@@ -37,6 +37,11 @@ broot_test["can_use_directory"] = function()
 end
 
 broot_test["can_use_git_root_directory"] = function()
+  child.lua([[
+    M.setup {
+      default_directory = require("broot.default_directory").git_root
+    }
+  ]])
   eq(child.lua_get([[M.broot{directory = M.GIT_ROOT}]]), vim.NIL)
   vim.loop.sleep(250)
   child.type_keys(100, " cd", "<CR>")

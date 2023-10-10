@@ -5,14 +5,21 @@ local M = {
       "~/.config/broot/conf.toml",
       "~/.config/broot/nvim.toml",
     }),
+    default_directory = vim.fn.getcwd,
   },
-  -- Unique value for use as a constant.
-  GIT_ROOT = {},
 }
 
 function M.setup(opts)
   if opts.config_files ~= nil then
     opts.config_files = vim.tbl_map(vim.fn.expand, opts.config_files)
+  end
+
+  -- If `default_directory is a string, wrap it in a function.
+  if type(opts.default_directory) == "string" then
+    local default_directory = opts.default_directory
+    opts.default_directory = function()
+      return default_directory
+    end
   end
 
   M.config = vim.tbl_extend("force", M.config, opts)
@@ -47,7 +54,7 @@ function M.broot(opts)
   -- Don't warn when exiting the Broot buffer.
   vim.api.nvim_buf_set_option(buffer_id, "modified", false)
 
-  local height = vim.o.lines - vim.o.cmdheight
+  local height = vim.o.lines - vim.o.cmdheight - 1
   if vim.o.laststatus ~= 0 then
     height = height - 1
   end
@@ -90,11 +97,9 @@ function M.broot(opts)
   }
 
   if opts.directory ~= nil then
-    if opts.directory == M.GIT_ROOT then
-      cmd_opts.cwd = require("broot.git").repo_root_or_current_directory()
-    else
-      cmd_opts.cwd = opts.directory
-    end
+    cmd_opts.cwd = opts.directory
+  else
+    cmd_opts.cwd = M.config.default_directory() or "."
   end
 
   local job_id = vim.fn.termopen(cmd, cmd_opts)

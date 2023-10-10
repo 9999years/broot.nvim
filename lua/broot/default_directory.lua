@@ -1,6 +1,6 @@
 local M = {}
 
-function M.repo_root_or_current_directory()
+function M.git_root()
   -- Directory of the current file.
   local directory = vim.fn.expand("%:h")
   local repo_root
@@ -21,11 +21,11 @@ function M.repo_root_or_current_directory()
     error("`git` is not executable")
   end
   vim.fn.jobwait({ job_id }, -1)
-  if repo_root ~= nil then
-    return repo_root
-  else
-    return vim.fn.getcwd()
-  end
+  return repo_root
+end
+
+function M.current_file()
+  return vim.fn.expand("%:h")
 end
 
 return M
