@@ -34,35 +34,23 @@
       ] (system:
         function (import nixpkgs {
           inherit system;
+          overlays = [
+            (import ./nix/overlay.nix)
+          ];
         }));
   in {
-    checks = forAllSystems (pkgs: let
-      commonArgs = {
-        src = ./.;
+    checks = forAllSystems (
+      pkgs: let
+        mkCheck =
+          pkgs.callPackage ./nix/mkCheck.nix {};
+      in {
+        # mini.nvim unit tests.
+        tests = mkCheck {
+          name = "tests";
 
-        dontConfigure = true;
-        dontBuild = true;
-        doCheck = true;
-
-        installPhase = ''
-          touch $out
-        '';
-      };
-    in {
-      tests = pkgs.stdenv.mkDerivation (commonArgs
-        // {
-          name = "broot.nvim-tests";
-
-          nativeBuildInputs = [
+          nativeCheckInputs = [
             pkgs.neovim
-            (pkgs.broot.overrideAttrs {
-              patches = [
-                (pkgs.fetchpatch {
-                  url = "https://github.com/Canop/broot/pull/758.diff";
-                  hash = "sha256-TwZ6rOR0TVwCD/8hnrWZw4eFj2mybaK+OXzVHE8Gyho=";
-                })
-              ];
-            })
+            pkgs.broot
             pkgs.git
           ];
 
@@ -72,82 +60,41 @@
             git init
             make test
           '';
-        });
+        };
 
-      stylua = pkgs.stdenv.mkDerivation (commonArgs
-        // {
-          name = "broot.nvim-stylua";
+        # Lua code formatting with stylua.
+        stylua = mkCheck {
+          name = "stylua";
 
-          nativeBuildInputs = [
+          nativeCheckInputs = [
             pkgs.stylua
           ];
 
           checkPhase = ''
             stylua --check .
           '';
-        });
+        };
 
-      alejandra = pkgs.stdenv.mkDerivation (commonArgs
-        // {
-          name = "broot.nvim-alejandra";
+        # Nix code formatting with alejandra.
+        alejandra = mkCheck {
+          name = "alejandra";
 
-          nativeBuildInputs = [
+          nativeCheckInputs = [
             pkgs.alejandra
           ];
 
           checkPhase = ''
             alejandra --check .
           '';
-        });
-    });
+        };
+      }
+    );
 
     packages = forAllSystems (pkgs: {
-      vimhelp = let
-        src = pkgs.applyPatches {
-          name = "vimhelp";
-          src = vimhelp;
-          patches = [./nix/patches/vimhelp.diff];
-        };
-      in
-        pkgs.writeShellApplication {
-          name = "vimhelp";
+      vimhelp = pkgs.callPackage ./nix/vimhelp.nix {vimhelp-src = vimhelp;};
 
-          runtimeInputs = [
-            (pkgs.python3.withPackages (pyPkgs: [
-              pyPkgs.flask
-            ]))
-          ];
-
-          text = ''
-            inDir="$1"
-            shift
-            tmpdir=$(mktemp -d)
-            cp -r ${pkgs.neovim}/share/nvim/runtime/doc/* "$tmpdir/"
-            cp -r "$inDir"/* "$tmpdir/"
-            python3 ${src}/scripts/h2h.py \
-              --project neovim \
-              --in-dir "$tmpdir/" \
-              "$@"
-          '';
-        };
-
-      docs = pkgs.stdenv.mkDerivation {
-        name = "broot.nvim-docs";
-
-        src = ./.;
-
-        dontConfigure = true;
-        dontBuild = true;
-
-        nativeBuildInputs = [
-          self.packages.${pkgs.system}.vimhelp
-        ];
-
-        installPhase = ''
-          mkdir -p "$out"
-          vimhelp doc/ --out-dir "$out"
-          cp "$out/broot.nvim.txt.html" "$out/index.html"
-        '';
+      docs = pkgs.callPackage ./nix/docs.nix {
+        vimhelp = self.packages.${pkgs.system}.vimhelp;
       };
     });
 
