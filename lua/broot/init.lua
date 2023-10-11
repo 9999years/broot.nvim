@@ -41,6 +41,17 @@ function M._mktemp()
   return path
 end
 
+function M._window_size()
+  local height = vim.o.lines - vim.o.cmdheight
+  if vim.o.laststatus ~= 0 then
+    height = height - 1
+  end
+  return {
+    height = height,
+    width = vim.o.columns,
+  }
+end
+
 function M.broot(opts)
   if opts == nil then
     opts = {}
@@ -59,17 +70,14 @@ function M.broot(opts)
   -- Don't warn when exiting the Broot buffer.
   vim.api.nvim_buf_set_option(buffer_id, "modified", false)
 
-  local height = vim.o.lines - vim.o.cmdheight - 1
-  if vim.o.laststatus ~= 0 then
-    height = height - 1
-  end
+  local window_size = M._window_size()
 
   local window_id = vim.api.nvim_open_win(buffer_id, true, {
     relative = "editor",
     row = 0,
     col = 0,
-    width = vim.o.columns,
-    height = height,
+    width = window_size.width,
+    height = window_size.height,
     style = "minimal",
   })
   if window_id == 0 then
@@ -108,6 +116,20 @@ function M.broot(opts)
     error("Broot command is not executable: " .. M.broot_binary)
   end
   vim.cmd(":startinsert")
+
+  vim.api.nvim_create_augroup("Broot", {})
+  vim.api.nvim_create_autocmd("VimResized", {
+    buffer = buffer_id,
+    group = "Broot",
+    nested = true,
+    callback = function()
+      local window_resize = M._window_size()
+      vim.api.nvim_win_set_width(window_id, window_resize.width)
+      vim.api.nvim_win_set_height(window_id, window_resize.height)
+      -- Moving the cursor back to {1, 0} puts the window where we expect.
+      vim.api.nvim_win_set_cursor(window_id, { 1, 0 })
+    end,
+  })
 end
 
 function M._on_broot_exit(exit_code, window_id, buffer_id, cmd_path, out_path)
