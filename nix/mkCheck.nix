@@ -10,6 +10,10 @@ in
       dontBuild = true;
       doCheck = true;
 
+      postPatch = ''
+        export HOME=$(pwd)
+      '';
+
       installPhase = ''
         touch $out
       '';
