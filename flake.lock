@@ -1,5 +1,21 @@
 {
   "nodes": {
+    "lualscheck": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1697068479,
+        "narHash": "sha256-o6elc2dNH9+iT2mq3b7cF1QO91n3V2X0hKI7iSROyd4=",
+        "owner": "9999years",
+        "repo": "lualscheck",
+        "rev": "759eeadbd13dcc8dffbd2d0b7071d3ddd314b7c0",
+        "type": "github"
+      },
+      "original": {
+        "owner": "9999years",
+        "repo": "lualscheck",
+        "type": "github"
+      }
+    },
     "mini-nvim": {
       "flake": false,
       "locked": {
@@ -33,6 +49,7 @@
     },
     "root": {
       "inputs": {
+        "lualscheck": "lualscheck",
         "mini-nvim": "mini-nvim",
         "nixpkgs": "nixpkgs",
         "vimhelp": "vimhelp"

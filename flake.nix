@@ -11,6 +11,10 @@
       url = "github:c4rlo/vimhelp";
       flake = false;
     };
+    lualscheck = {
+      url = "github:9999years/lualscheck";
+      flake = false;
+    };
   };
 
   nixConfig = {
@@ -24,6 +28,7 @@
     nixpkgs,
     mini-nvim,
     vimhelp,
+    lualscheck,
   }: let
     forAllSystems = function:
       nixpkgs.lib.genAttrs [
@@ -62,6 +67,20 @@
           '';
         };
 
+        # Check diagnostics and type annotations with `lua-language-server`.
+        luals = mkCheck {
+          name = "lua-language-server";
+
+          nativeCheckInputs = [
+            self.packages.${pkgs.system}.lualscheck
+            pkgs.lua-language-server
+          ];
+
+          checkPhase = ''
+            lualscheck
+          '';
+        };
+
         # Lua code formatting with stylua.
         stylua = mkCheck {
           name = "stylua";
@@ -92,6 +111,8 @@
 
     packages = forAllSystems (pkgs: {
       vimhelp = pkgs.callPackage ./nix/vimhelp.nix {vimhelp-src = vimhelp;};
+
+      lualscheck = pkgs.callPackage ./nix/lualscheck.nix {lualscheck-src = lualscheck;};
 
       docs = pkgs.callPackage ./nix/docs.nix {
         vimhelp = self.packages.${pkgs.system}.vimhelp;

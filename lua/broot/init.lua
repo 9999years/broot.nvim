@@ -1,6 +1,7 @@
 local M = {
   config = {
     broot_binary = "broot",
+    extra_args = {},
     config_files = vim.tbl_map(vim.fn.expand, {
       "~/.config/broot/conf.toml",
       "~/.config/broot/nvim.toml",
@@ -9,6 +10,13 @@ local M = {
   },
 }
 
+---@class SetupOpts
+---@field broot_binary string? The name of the broot binary to launch.
+---@field extra_args string[]? Extra arguments to pass to broot
+---@field config_files string[]? Paths to configuration files to pass to broot with the `--conf` argument. Values are passed to `vim.fn.expand` before being stored, so you can use environment variables and `~` in them.
+---@field default_directory string|(fun(): string?)|nil `broot.broot()` calls this to determine the directory to launch broot in if the user doesn't supply one explicitly. If this function returns nil, `vim.fn.getcwd()` is used instead.
+
+---@param opts SetupOpts
 function M.setup(opts)
   if opts.config_files ~= nil then
     opts.config_files = vim.tbl_map(vim.fn.expand, opts.config_files)
@@ -18,6 +26,7 @@ function M.setup(opts)
   if type(opts.default_directory) == "string" then
     local default_directory = opts.default_directory
     opts.default_directory = function()
+      ---@type string
       return default_directory
     end
   end
@@ -25,10 +34,12 @@ function M.setup(opts)
   M.config = vim.tbl_extend("force", M.config, opts)
 end
 
+---@return string
 function M._config_files()
   return vim.fn.join(M.config.config_files, ";")
 end
 
+---@return string
 function M._mktemp()
   local path = vim.fn.tempname()
   if path == nil then
@@ -41,6 +52,11 @@ function M._mktemp()
   return path
 end
 
+---@class WindowSize
+---@field width integer The window width, in columns
+---@field height integer The window height, in rows
+
+---@return WindowSize
 function M._window_size()
   local height = vim.o.lines - vim.o.cmdheight
   if vim.o.laststatus ~= 0 then
@@ -52,6 +68,11 @@ function M._window_size()
   }
 end
 
+---@class BrootOpts
+---@field extra_args string[]? A list of extra arguments to pass to broot. These are used in addition to, rather than instead of, the global `extra_args` set with `broot.setup()`.
+---@field directory string? The directory to launch broot in. If not given, the `default_directory` function set in `broot.setup()` is used.
+
+---@param opts BrootOpts?
 function M.broot(opts)
   if opts == nil then
     opts = {}
@@ -91,6 +112,8 @@ function M.broot(opts)
     .. vim.fn.shellescape(M._config_files())
     .. " --outcmd "
     .. vim.fn.shellescape(cmd_path)
+    .. " "
+    .. vim.fn.join(M.config.extra_args)
     .. " "
     .. vim.fn.join(extra_args)
     .. " "
@@ -132,6 +155,11 @@ function M.broot(opts)
   })
 end
 
+---@param exit_code integer
+---@param window_id integer
+---@param buffer_id integer
+---@param cmd_path string
+---@param out_path string
 function M._on_broot_exit(exit_code, window_id, buffer_id, cmd_path, out_path)
   if exit_code ~= 0 then
     error("Broot failed with exit code " .. exit_code)
@@ -142,6 +170,7 @@ function M._on_broot_exit(exit_code, window_id, buffer_id, cmd_path, out_path)
   M._read_stdout_path(out_path)
 end
 
+---@param cmd_path string
 function M._read_outcmd_path(cmd_path)
   local file = io.open(cmd_path)
   if file ~= nil then
@@ -164,6 +193,7 @@ function M._read_outcmd_path(cmd_path)
   end
 end
 
+---@param out_path string
 function M._read_stdout_path(out_path)
   local file = io.open(out_path)
   if file ~= nil then
