@@ -55,7 +55,14 @@
 
           nativeBuildInputs = [
             pkgs.neovim
-            pkgs.broot
+            (pkgs.broot.overrideAttrs {
+              patches = [
+                (pkgs.fetchpatch {
+                  url = "https://github.com/Canop/broot/pull/758.diff";
+                  hash = "sha256-TwZ6rOR0TVwCD/8hnrWZw4eFj2mybaK+OXzVHE8Gyho=";
+                })
+              ];
+            })
             pkgs.git
           ];
 

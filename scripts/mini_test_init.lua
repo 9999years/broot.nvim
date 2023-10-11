@@ -11,9 +11,7 @@ vim.opt.runtimepath:append("," .. vim.fn.getcwd() .. "," .. mini_nvim)
 -- Set up 'mini.test'
 require("mini.test").setup()
 
--- Set up 'broot.nvim'.
-local broot = require("broot")
-broot.setup {
+require("broot").setup {
   config_files = {
     vim.fn.fnamemodify("tests/data/conf.toml", ":p"),
     vim.fn.fnamemodify("tests/data/nvim.toml", ":p"),

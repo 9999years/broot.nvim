@@ -1,2 +1,5 @@
 # No Git info.
 default_flags = "G"
+# Print the root as a relative path so it doesn't matter what directory you run
+# the tests in.
+root_relative_path = true
