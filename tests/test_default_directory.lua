@@ -1,18 +1,18 @@
-local MiniTest = require("mini.test")
+local MiniTest = require "mini.test"
 local eq = MiniTest.expect.equality
 
 local T, child = require("test").new_set { module = "broot.default_directory" }
 
 T["git_root"] = function()
-  eq(child.lua_get([[M.git_root()]]), vim.trim(vim.fn.system("git rev-parse --show-toplevel")))
+  eq(child.lua_get [[M.git_root()]], vim.trim(vim.fn.system "git rev-parse --show-toplevel"))
 
   -- In the root directory, we shouldn't have a repo root:
-  child.cmd([[ cd / ]])
-  eq(child.lua_get([[M.git_root()]]), vim.NIL)
+  child.cmd [[ cd / ]]
+  eq(child.lua_get [[M.git_root()]], vim.NIL)
 end
 
 T["current_file"] = function()
-  eq(child.lua_get([[M.current_file()]]), vim.fn.expand("%:h"))
+  eq(child.lua_get [[M.current_file()]], vim.fn.expand "%:h")
 end
 
 return T
