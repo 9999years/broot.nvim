@@ -15,6 +15,7 @@ local M = {
 ---@field extra_args string[]? Extra arguments to pass to broot
 ---@field config_files string[]? Paths to configuration files to pass to broot with the `--conf` argument. Values are passed to `vim.fn.expand` before being stored, so you can use environment variables and `~` in them.
 ---@field default_directory string|(fun(): string?)|nil `broot.broot()` calls this to determine the directory to launch broot in if the user doesn't supply one explicitly. If this function returns nil, `vim.fn.getcwd()` is used instead.
+---@field create_user_commands boolean? If true, define the `:Broot` command
 
 ---@param opts SetupOpts
 function M.setup(opts)
@@ -29,6 +30,10 @@ function M.setup(opts)
       ---@type string
       return default_directory
     end
+  end
+
+  if opts.create_user_commands then
+    require("broot.user_commands").create_user_commands()
   end
 
   M.config = vim.tbl_extend("force", M.config, opts)
