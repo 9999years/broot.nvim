@@ -15,6 +15,10 @@
       url = "github:9999years/lualscheck";
       flake = false;
     };
+    neodev = {
+      url = "github:folke/neodev.nvim";
+      flake = false;
+    };
   };
 
   nixConfig = {
@@ -29,6 +33,7 @@
     mini-nvim,
     vimhelp,
     lualscheck,
+    neodev,
   }: let
     forAllSystems = function:
       nixpkgs.lib.genAttrs [
@@ -46,8 +51,9 @@
   in {
     checks = forAllSystems (
       pkgs: let
-        mkCheck =
-          pkgs.callPackage ./nix/mkCheck.nix {};
+        mkCheck = pkgs.callPackage ./nix/mkCheck.nix {
+          luarc = self.packages.${pkgs.system}.luarc;
+        };
       in {
         # mini.nvim unit tests.
         tests = mkCheck {
@@ -117,6 +123,8 @@
       docs = pkgs.callPackage ./nix/docs.nix {
         vimhelp = self.packages.${pkgs.system}.vimhelp;
       };
+
+      luarc = pkgs.callPackage ./nix/luarc.nix {inherit neodev;};
     });
 
     devShells = forAllSystems (pkgs: {
@@ -124,6 +132,10 @@
         MINI_NVIM = "${mini-nvim}";
 
         inputsFrom = builtins.attrValues self.checks.${pkgs.system};
+
+        shellHook = ''
+          ${self.packages.${pkgs.system}.luarc.link-to-cwd}
+        '';
       };
     });
   };

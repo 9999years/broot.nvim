@@ -1,4 +1,7 @@
-{stdenv}: args @ {name, ...}: let
+{
+  stdenv,
+  luarc,
+}: args @ {name, ...}: let
   args' = builtins.removeAttrs args ["name"];
 in
   stdenv.mkDerivation ({
@@ -12,6 +15,7 @@ in
 
       postPatch = ''
         export HOME=$(pwd)
+        ${luarc.link-to-cwd}
       '';
 
       installPhase = ''
