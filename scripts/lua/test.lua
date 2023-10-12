@@ -1,4 +1,4 @@
-local MiniTest = require("mini.test")
+local MiniTest = require "mini.test"
 
 local M = {}
 

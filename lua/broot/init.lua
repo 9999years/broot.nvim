@@ -48,7 +48,7 @@ end
 function M._mktemp()
   local path = vim.fn.tempname()
   if path == nil then
-    error("Failed to create tempfile")
+    error "Failed to create tempfile"
   end
   local file = io.open(path, "w")
   if file ~= nil then
@@ -91,7 +91,7 @@ function M.broot(opts)
   -- Create an unlisted `scratch-buffer`.
   local buffer_id = vim.api.nvim_create_buf(false, true)
   if buffer_id == 0 then
-    error("Failed to create buffer")
+    error "Failed to create buffer"
   end
   -- Don't warn when exiting the Broot buffer.
   vim.api.nvim_buf_set_option(buffer_id, "modified", false)
@@ -107,7 +107,7 @@ function M.broot(opts)
     style = "minimal",
   })
   if window_id == 0 then
-    error("Failed to open window")
+    error "Failed to open window"
   end
 
   local cmd_path = M._mktemp()
@@ -139,11 +139,11 @@ function M.broot(opts)
 
   local job_id = vim.fn.termopen(cmd, cmd_opts)
   if job_id == 0 then
-    error("Invalid job arguments")
+    error "Invalid job arguments"
   elseif job_id == -1 then
     error("Broot command is not executable: " .. M.broot_binary)
   end
-  vim.cmd(":startinsert")
+  vim.cmd ":startinsert"
 
   vim.api.nvim_create_augroup("Broot", {})
   vim.api.nvim_create_autocmd("VimResized", {

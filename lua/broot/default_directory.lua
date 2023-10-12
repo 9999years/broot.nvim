@@ -2,7 +2,7 @@ local M = {}
 
 function M.git_root()
   -- Directory of the current file.
-  local directory = vim.fn.expand("%:h")
+  local directory = vim.fn.expand "%:h"
   local repo_root
   local job_id = vim.fn.jobstart({ "git", "rev-parse", "--show-toplevel" }, {
     cwd = directory,
@@ -16,16 +16,16 @@ function M.git_root()
     end,
   })
   if job_id == 0 then
-    error("Invalid arguments when running `git rev-parse --show-toplevel`")
+    error "Invalid arguments when running `git rev-parse --show-toplevel`"
   elseif job_id == -1 then
-    error("`git` is not executable")
+    error "`git` is not executable"
   end
   vim.fn.jobwait({ job_id }, -1)
   return repo_root
 end
 
 function M.current_file()
-  return vim.fn.expand("%:h")
+  return vim.fn.expand "%:h"
 end
 
 return M
