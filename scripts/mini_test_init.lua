@@ -6,7 +6,8 @@ local mini_nvim = os.getenv("MINI_NVIM")
 if mini_nvim == nil then
   error("$MINI_NVIM is not set; are you in the `nix develop` shell?")
 end
-vim.opt.runtimepath:append("," .. vim.fn.getcwd() .. "," .. mini_nvim)
+local cwd = vim.fn.getcwd()
+vim.opt.runtimepath:append("," .. vim.fn.join({ cwd, cwd .. "/scripts", mini_nvim }, ","))
 
 -- Set up 'mini.test'
 require("mini.test").setup()
