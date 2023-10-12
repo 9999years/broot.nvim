@@ -4,7 +4,7 @@
                                       Type |gO| to see the table of contents.
 
 =============================================================================
-                                                                 *broot.nvim*
+                                                                  *broot.nvim*
 
 |broot.nvim| is a Broot integration plugin for Neovim. Learn more about Broot
 here: https://github.com/Canop/broot
@@ -17,8 +17,13 @@ Use |broot.nvim| by |lua-require|ing it: >
     -- Launch `broot`.
     require("broot").broot()
 <
-                                                                       *broot*
+=============================================================================
+Lua interface                                                          *broot*
+
 The |broot| module contains the following functions:
+
+=============================================================================
+Configuration                                              *configuring-broot*
 
 broot.setup(opts)                                              *broot.setup()*
 
@@ -31,8 +36,10 @@ broot.setup(opts)                                              *broot.setup()*
                                                   *broot.config.broot_binary*
         • broot_binary: (string, default `broot`) The name of the
           `broot` binary to launch.
+                                                    *broot.config.extra_args*
+        • extra_args: (string[]) Extra arguments to pass to `broot`.
                                                   *broot.config.config_files*
-        • config_files: (list of strings) The paths to configuration
+        • config_files: (string[]) The paths to configuration
           files to pass to `broot` with the `--conf` argument.
           Values are passed to |expand()| before being stored, so you can use
           environment variables and `~` in them.
@@ -40,7 +47,7 @@ broot.setup(opts)                                              *broot.setup()*
           • `~/.config/broot/conf.toml`
           • `~/.config/broot/nvim.toml`
                                              *broot.config.default_directory*
-        • default_directory: (function() -> string) |broot.broot()| calls this
+        • default_directory: (fun(): string?) |broot.broot()| calls this
           function to determine the directory to launch `broot` in if the user
           doesn't give one explicitly.
 
@@ -52,9 +59,14 @@ broot.setup(opts)                                              *broot.setup()*
           The `require("broot.default_directory")` module contains a few
           useful values for this configuration key:
 
-          • `git_root` returns the Git repository root
-            of the |current-file|.
+          • `git_root` returns the Git repository root of the |current-file|.
           • `current_file` returns the directory of the |current-file|.
+                                          *broot.config.create_user_commands*
+        • create_user_commands: (boolean) If true, the `:Broot` command will
+          be defined.
+
+=============================================================================
+Launching Broot                                              *launching-broot*
 
 broot.broot(opts = {})                                        *broot.broot()*
 
@@ -65,10 +77,26 @@ broot.broot(opts = {})                                        *broot.broot()*
         Options for launching `broot`. The following keys are supported, all
         optional:
         • extra_args: (list of strings) Extra arguments to pass to the `broot`
-          binary.
-        • directory: (string, default |config.default_directory()|)
+          binary. These arguments are used in addition to, rather than instead
+          of, the global |broot.config.extra_args|.
+        • directory: (string, default |broot.config.default_directory|)
           The directory to launch `broot` in.
           The directory is set using the `cwd` of the started process, rather
           than being passed as an argument to `broot`.
+
+=============================================================================
+User commands                                                 *broot-commands*
+
+                                                                      *:Broot*
+:Broot [directory]      Open `broot` in the given directory, or the
+                        |broot.config.default_directory| if none is given.
+
+                        The `:Broot` command only supports choosing the
+                        `directory` to launch `broot` in; for other options
+                        (like `extra_args`), use |broot.broot()| directly.
+
+                        The `:Broot` command is only defined if
+                        |broot.setup()| is called with `create_user_commands =
+                        true`.
 
  vim:tw=78:ts=8:et:ft=help:norl:
