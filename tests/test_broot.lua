@@ -1,7 +1,7 @@
 local MiniTest = require("mini.test")
 local expect, eq = MiniTest.expect, MiniTest.expect.equality
 
-local T, child = require("test").new_set("broot")
+local T, child = require("test").new_set { module = "broot" }
 
 T["can_open_file"] = function()
   eq(child.lua_get([[M.broot()]]), vim.NIL)
