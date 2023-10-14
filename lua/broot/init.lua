@@ -88,6 +88,14 @@ function M.broot(opts)
     extra_args = vim.tbl_map(vim.fn.shellescape, opts.extra_args)
   end
 
+  local cmd_opts = {}
+
+  if opts.directory ~= nil then
+    cmd_opts.cwd = opts.directory
+  else
+    cmd_opts.cwd = M.config.default_directory() or "."
+  end
+
   -- Create an unlisted `scratch-buffer`.
   local buffer_id = vim.api.nvim_create_buf(false, true)
   if buffer_id == 0 then
@@ -125,16 +133,8 @@ function M.broot(opts)
     .. " > "
     .. vim.fn.shellescape(out_path)
 
-  local cmd_opts = {
-    on_exit = function(_job_id, exit_code, _event_type)
-      M._on_broot_exit(exit_code, window_id, buffer_id, cmd_path, out_path)
-    end,
-  }
-
-  if opts.directory ~= nil then
-    cmd_opts.cwd = opts.directory
-  else
-    cmd_opts.cwd = M.config.default_directory() or "."
+  cmd_opts.on_exit = function(_job_id, exit_code, _event_type)
+    M._on_broot_exit(exit_code, window_id, buffer_id, cmd_path, out_path)
   end
 
   local job_id = vim.fn.termopen(cmd, cmd_opts)
