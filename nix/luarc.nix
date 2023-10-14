@@ -9,6 +9,7 @@
       text = builtins.toJSON {
         "workspace.library" = [
           "./lua"
+          "./scripts/lua"
           "${neodev}/types/stable"
           "\${3rd}/luv/library"
           "\${3rd}/luassert/library"
