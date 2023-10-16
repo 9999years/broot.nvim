@@ -1,13 +1,22 @@
-local M = {
-  config = {
-    broot_binary = "broot",
-    extra_args = {},
-    config_files = vim.tbl_map(vim.fn.expand, {
-      "~/.config/broot/conf.toml",
-      "~/.config/broot/nvim.toml",
-    }),
-    default_directory = vim.fn.getcwd,
-  },
+local M = {}
+
+---@class Config
+---@field broot_binary string
+---@field extra_args string[]
+---@field config_files string[]
+---@field default_directory fun(): string?
+---@field is_config_file fun(): boolean|string?
+
+---@type Config
+M.config = {
+  broot_binary = "broot",
+  extra_args = {},
+  config_files = vim.tbl_map(vim.fn.expand, {
+    "~/.config/broot/conf.toml",
+    "~/.config/broot/nvim.toml",
+  }),
+  default_directory = vim.fn.getcwd,
+  is_config_file = require("broot.default_config_file").is_broot_nvim_config_file,
 }
 
 ---@class SetupOpts
