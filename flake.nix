@@ -112,6 +112,16 @@
             alejandra --check .
           '';
         };
+
+        luacheck = mkCheck {
+          name = "luacheck";
+
+          nativeCheckInputs = [pkgs.lua5_1.pkgs.luacheck];
+
+          checkPhase = ''
+            luacheck .
+          '';
+        };
       }
     );
 
@@ -132,6 +142,9 @@
         MINI_NVIM = "${mini-nvim}";
 
         inputsFrom = builtins.attrValues self.checks.${pkgs.system};
+        packages = [
+          pkgs.lua5_1.pkgs.luacheck
+        ];
 
         shellHook = ''
           ${self.packages.${pkgs.system}.luarc.link-to-cwd}
