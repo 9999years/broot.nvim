@@ -57,12 +57,12 @@ remaining arguments will be executed in Neovim as an |ex-command|. Separately,
 verb work), and other commands will be run as `:!` commands in 'shell'.
 
 ================================================================================
-Lua interface                                                              *broot*
+Lua interface                                                          *broot-lua*
 
 The |broot| module contains the |broot.setup()| and |broot.broot()| functions.
 
 ================================================================================
-Configuration                                                  *configuring-broot*
+Configuration                                                  *broot-configuring*
 
 broot.setup(opts: table|nil)                                       *broot.setup()*
 
@@ -106,7 +106,7 @@ broot.setup(opts: table|nil)                                       *broot.setup(
           be defined.
 
 ================================================================================
-Launching Broot                                                  *launching-broot*
+Launching Broot                                                  *broot-launching*
 
 broot.broot(opts = {})                                             *broot.broot()*
 
