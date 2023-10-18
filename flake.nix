@@ -3,20 +3,42 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs";
+
+    # Neovim test framework.
     mini-nvim = {
       url = "github:echasnovski/mini.nvim";
       flake = false;
     };
+
+    # Vimhelp->HTML generation. Used for the GitHub pages site.
     vimhelp = {
       url = "github:c4rlo/vimhelp";
       flake = false;
     };
+
+    # Tool for running `lua-language-server` in check mode for type-checking.
     lualscheck = {
       url = "github:9999years/lualscheck";
       flake = false;
     };
+
+    # Neovim Lua API type stubs.
     neodev = {
       url = "github:folke/neodev.nvim";
+      flake = false;
+    };
+
+    # Lua code coverage.
+    luacov = {
+      url = "github:lunarmodules/luacov";
+      flake = false;
+    };
+    cluacov = {
+      url = "github:mpeterv/cluacov";
+      flake = false;
+    };
+    luacov-reporter-lcov = {
+      url = "github:daurnimator/luacov-reporter-lcov";
       flake = false;
     };
   };
@@ -34,6 +56,9 @@
     vimhelp,
     lualscheck,
     neodev,
+    luacov,
+    cluacov,
+    luacov-reporter-lcov,
   }: let
     forAllSystems = function:
       nixpkgs.lib.genAttrs [
@@ -54,6 +79,7 @@
         mkCheck = pkgs.callPackage ./nix/mkCheck.nix {
           luarc = self.packages.${pkgs.system}.luarc;
         };
+        luaPkgs = pkgs.lua5_1.pkgs;
       in {
         # mini.nvim unit tests.
         tests = mkCheck {
@@ -72,6 +98,27 @@
             make test
           '';
         };
+
+        luacov = self.checks.${pkgs.system}.tests.override (old: {
+          name = "luacov";
+
+          nativeCheckInputs =
+            (old.nativeCheckInputs or [])
+            ++ [
+              self.packages.${pkgs.system}.luacov
+              self.packages.${pkgs.system}.cluacov
+              pkgs.lcov
+            ];
+
+          COVERAGE = true;
+
+          installPhase = ''
+            mkdir $out
+            cp target/coverage.lcov $out/
+            cp target/coverage-summary.txt $out/
+            cp --recursive target/coverage-report $out/
+          '';
+        });
 
         # Check diagnostics and type annotations with `lua-language-server`.
         luals = mkCheck {
@@ -116,7 +163,7 @@
         luacheck = mkCheck {
           name = "luacheck";
 
-          nativeCheckInputs = [pkgs.lua5_1.pkgs.luacheck];
+          nativeCheckInputs = [luaPkgs.luacheck];
 
           checkPhase = ''
             luacheck .
@@ -135,6 +182,20 @@
       };
 
       luarc = pkgs.callPackage ./nix/luarc.nix {inherit neodev;};
+
+      luacov = pkgs.callPackage ./nix/luacov.nix {
+        inherit luacov;
+        luacov-reporter-lcov = self.packages.${pkgs.system}.luacov-reporter-lcov;
+      };
+      cluacov = pkgs.callPackage ./nix/cluacov.nix {
+        inherit cluacov;
+        luacov = self.packages.${pkgs.system}.luacov;
+      };
+      luacov-reporter-lcov = pkgs.callPackage ./nix/luacov-reporter-lcov.nix {
+        inherit luacov-reporter-lcov;
+      };
+
+      coverage = self.checks.${pkgs.system}.luacov;
     });
 
     devShells = forAllSystems (pkgs: {
@@ -142,9 +203,6 @@
         MINI_NVIM = "${mini-nvim}";
 
         inputsFrom = builtins.attrValues self.checks.${pkgs.system};
-        packages = [
-          pkgs.lua5_1.pkgs.luacheck
-        ];
 
         shellHook = ''
           ${self.packages.${pkgs.system}.luarc.link-to-cwd}

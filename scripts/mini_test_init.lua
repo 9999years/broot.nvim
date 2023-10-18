@@ -12,6 +12,11 @@ vim.opt.runtimepath:append("," .. vim.fn.join({ cwd, cwd .. "/scripts", mini_nvi
 -- Set up 'mini.test'
 require("mini.test").setup()
 
+-- Set up coverage if requested.
+if os.getenv "COVERAGE" ~= nil then
+  require "luacov"
+end
+
 require("broot").setup {
   config_files = {
     vim.fn.fnamemodify("tests/data/conf.toml", ":p"),

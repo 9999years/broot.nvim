@@ -1,5 +1,53 @@
 {
   "nodes": {
+    "cluacov": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1525526952,
+        "narHash": "sha256-+kWkLQgre80drX8QTnu15RozO4H32tboSALUTEcegsg=",
+        "owner": "mpeterv",
+        "repo": "cluacov",
+        "rev": "ca8e019e1f61b7f3f2c2d37f2728a741dc167cc5",
+        "type": "github"
+      },
+      "original": {
+        "owner": "mpeterv",
+        "repo": "cluacov",
+        "type": "github"
+      }
+    },
+    "luacov": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1695190830,
+        "narHash": "sha256-uxm1HQd5kV1pOZ0qMWARgLUh+UqHB4J9ztXi9WdGGKU=",
+        "owner": "lunarmodules",
+        "repo": "luacov",
+        "rev": "716c408cf4489dfb516b59021042839b8f4132d6",
+        "type": "github"
+      },
+      "original": {
+        "owner": "lunarmodules",
+        "repo": "luacov",
+        "type": "github"
+      }
+    },
+    "luacov-reporter-lcov": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1572605922,
+        "narHash": "sha256-o+9E+pMVpWpd4M0gBnU0g9OA7UZjNbuqFa6WG2j73nE=",
+        "owner": "daurnimator",
+        "repo": "luacov-reporter-lcov",
+        "rev": "4d881ddb4eeec5ac0cd7d4b7679e3e59f9ac5745",
+        "type": "github"
+      },
+      "original": {
+        "owner": "daurnimator",
+        "repo": "luacov-reporter-lcov",
+        "type": "github"
+      }
+    },
     "lualscheck": {
       "flake": false,
       "locked": {
@@ -65,6 +113,9 @@
     },
     "root": {
       "inputs": {
+        "cluacov": "cluacov",
+        "luacov": "luacov",
+        "luacov-reporter-lcov": "luacov-reporter-lcov",
         "lualscheck": "lualscheck",
         "mini-nvim": "mini-nvim",
         "neodev": "neodev",
