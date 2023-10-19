@@ -1,20 +1,20 @@
 {
-  lua5_1,
-  luacov,
+  lua,
+  inputs,
   luacov-reporter-lcov,
 }:
-lua5_1.pkgs.buildLuarocksPackage {
+lua.pkgs.buildLuarocksPackage {
   pname = "luacov";
   version = "scm-1";
-  src = luacov;
+  src = inputs.luacov-src;
 
   propagatedBuildInputs = [
-    lua5_1
+    lua
     luacov-reporter-lcov
   ];
 
   patches = [
-    ./patches/luacov.diff
+    ../patches/luacov.diff
   ];
 
   # Tell `luacov` where to find its assets.

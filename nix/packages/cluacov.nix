@@ -1,15 +1,15 @@
 {
-  lua5_1,
+  lua,
   luacov,
-  cluacov,
+  inputs,
 }:
-lua5_1.pkgs.buildLuarocksPackage {
+lua.pkgs.buildLuarocksPackage {
   pname = "cluacov";
   version = "scm-1";
-  src = cluacov;
+  src = inputs.cluacov-src;
 
   propagatedBuildInputs = [
-    lua5_1
+    lua
     luacov
   ];
 }

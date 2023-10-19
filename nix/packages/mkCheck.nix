@@ -26,4 +26,13 @@
       }
       // args');
 in
-  args: lib.makeOverridable mkCheck args
+  # When this file gets `callPackage`d, `makeOverridable` is called on the
+  # result. So we need to give _our_ override attribute a different name so we
+  # can use it later.
+  args: let
+    drv = lib.makeOverridable mkCheck args;
+  in
+    drv
+    // {
+      overrideCheck = drv.override;
+    }
