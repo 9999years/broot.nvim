@@ -1,0 +1,12 @@
+diff --git a/luacov-reporter-lcov-scm-0.rockspec b/luacov-reporter-lcov-scm-0.rockspec
+index c257373..c4e808e 100644
+--- a/luacov-reporter-lcov-scm-0.rockspec
++++ b/luacov-reporter-lcov-scm-0.rockspec
+@@ -13,7 +13,6 @@ source = {
+ 
+ dependencies = {
+ 	"lua >= 5.1";
+-	"luacov";
+ }
+ 
+ build = {

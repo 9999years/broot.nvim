@@ -3,12 +3,12 @@
   applyPatches,
   neovim,
   python3,
-  vimhelp-src,
+  inputs,
 }: let
   src = applyPatches {
     name = "vimhelp";
-    src = vimhelp-src;
-    patches = [./patches/vimhelp.diff];
+    src = inputs.vimhelp-src;
+    patches = [../patches/vimhelp.diff];
   };
 in
   writeShellApplication {

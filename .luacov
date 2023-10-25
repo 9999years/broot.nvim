@@ -1,0 +1,9 @@
+return {
+  modules = {
+    ["broot"] = "lua/broot/init.lua",
+    ["broot.*"] = "lua",
+  },
+  statsfile = "target/coverage.stats",
+  reportfile = "target/coverage.lcov",
+  tick = true,
+}

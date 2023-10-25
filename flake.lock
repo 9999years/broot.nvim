@@ -1,6 +1,54 @@
 {
   "nodes": {
-    "lualscheck": {
+    "cluacov-src": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1525526952,
+        "narHash": "sha256-+kWkLQgre80drX8QTnu15RozO4H32tboSALUTEcegsg=",
+        "owner": "mpeterv",
+        "repo": "cluacov",
+        "rev": "ca8e019e1f61b7f3f2c2d37f2728a741dc167cc5",
+        "type": "github"
+      },
+      "original": {
+        "owner": "mpeterv",
+        "repo": "cluacov",
+        "type": "github"
+      }
+    },
+    "luacov-reporter-lcov-src": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1572605922,
+        "narHash": "sha256-o+9E+pMVpWpd4M0gBnU0g9OA7UZjNbuqFa6WG2j73nE=",
+        "owner": "daurnimator",
+        "repo": "luacov-reporter-lcov",
+        "rev": "4d881ddb4eeec5ac0cd7d4b7679e3e59f9ac5745",
+        "type": "github"
+      },
+      "original": {
+        "owner": "daurnimator",
+        "repo": "luacov-reporter-lcov",
+        "type": "github"
+      }
+    },
+    "luacov-src": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1695190830,
+        "narHash": "sha256-uxm1HQd5kV1pOZ0qMWARgLUh+UqHB4J9ztXi9WdGGKU=",
+        "owner": "lunarmodules",
+        "repo": "luacov",
+        "rev": "716c408cf4489dfb516b59021042839b8f4132d6",
+        "type": "github"
+      },
+      "original": {
+        "owner": "lunarmodules",
+        "repo": "luacov",
+        "type": "github"
+      }
+    },
+    "lualscheck-src": {
       "flake": false,
       "locked": {
         "lastModified": 1697068479,
@@ -32,14 +80,14 @@
         "type": "github"
       }
     },
-    "neodev": {
+    "neodev-src": {
       "flake": false,
       "locked": {
-        "lastModified": 1697004367,
-        "narHash": "sha256-sxn2e4GfsHK3s/cAvrAl0NHa5rNSneU/0qVrlKGt9Hw=",
+        "lastModified": 1697609171,
+        "narHash": "sha256-CLEzl03DNIQlLvrf+shTJH0R5mhU9nnTJMMdMpPy6Og=",
         "owner": "folke",
         "repo": "neodev.nvim",
-        "rev": "a4b6e7ca11ff5be2264d5c169fcedd97d8699ec4",
+        "rev": "b094a663ccb71733543d8254b988e6bebdbdaca4",
         "type": "github"
       },
       "original": {
@@ -65,14 +113,17 @@
     },
     "root": {
       "inputs": {
-        "lualscheck": "lualscheck",
+        "cluacov-src": "cluacov-src",
+        "luacov-reporter-lcov-src": "luacov-reporter-lcov-src",
+        "luacov-src": "luacov-src",
+        "lualscheck-src": "lualscheck-src",
         "mini-nvim": "mini-nvim",
-        "neodev": "neodev",
+        "neodev-src": "neodev-src",
         "nixpkgs": "nixpkgs",
-        "vimhelp": "vimhelp"
+        "vimhelp-src": "vimhelp-src"
       }
     },
-    "vimhelp": {
+    "vimhelp-src": {
       "flake": false,
       "locked": {
         "lastModified": 1691566434,

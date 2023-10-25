@@ -1,7 +1,7 @@
 {
   coreutils,
   writeTextFile,
-  neodev,
+  inputs,
 }: let
   luarc =
     (writeTextFile {
@@ -9,7 +9,7 @@
       text = builtins.toJSON {
         "workspace.library" = [
           "./lua"
-          "${neodev}/types/stable"
+          "${inputs.neodev-src}/types/stable"
           "\${3rd}/luv/library"
           "\${3rd}/luassert/library"
         ];
