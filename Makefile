@@ -1,4 +1,3 @@
-
 NVIM_COMMAND = "lua MiniTest.run()"
 
 ifdef file
